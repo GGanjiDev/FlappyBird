@@ -18,7 +18,7 @@ Kiến trúc: **Clean Architecture + MVI + multi-module chia theo feature** (cù
 ```
 
 **Bản web (GitHub Pages):** mỗi lần push vào `main`, workflow `.github/workflows/deploy-js.yml` build `browserReleaseWebpack`
-và deploy `build/www` lên https://ggangjidev.github.io/FlappyBird/ (repo phải public, Pages Source = GitHub Actions).
+và deploy `build/www` lên https://gganjidev.github.io/FlappyBird/ (repo phải public, Pages Source = GitHub Actions).
 App KMP-SevenBalls mở URL này trong WebView → **sửa game chỉ cần push, không cần phát hành lại app**.
 
 - Tên người chơi: app chủ truyền qua query string `?flappy_username=...` → game đọc `Environment["FLAPPY_USERNAME"]`
