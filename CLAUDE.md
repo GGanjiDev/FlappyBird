@@ -14,23 +14,18 @@ Kiến trúc: **Clean Architecture + MVI + multi-module chia theo feature** (cù
 ./gradlew jvmTest                   # chạy toàn bộ unit test của mọi module
 ./gradlew :feature:game:jvmTest     # test một module
 ./gradlew :core:domain:jvmTest      # test luật game (nhanh, không cần KorGE)
-./gradlew packSingleHtml            # bản web 1 file: build/single/flappybird.html (nhúng vào WebView)
+./gradlew browserReleaseWebpack     # bản web: build/www (CI deploy lên GitHub Pages)
 ```
 
-**Thư viện cho app khác (`sdk/`):** Gradle build RIÊNG (Kotlin 2.3 / Compose MP 1.9.3 / AGP 8.13 / Gradle 8.14,
-khớp KMP-SevenBalls) — không include vào build KorGE. Publish `com.appmb.flappy:flappybird` — CHỈ Android (AAR) + iOS (klib), không sources jar, không checksum (21 file),
-API công khai duy nhất: `@Composable FlappyBirdGame(playerName: String, modifier)` (WebView chạy bản web 1 file của game).
+**Bản web (GitHub Pages):** mỗi lần push vào `main`, workflow `.github/workflows/deploy-js.yml` build `browserReleaseWebpack`
+và deploy `build/www` lên https://ggangjidev.github.io/FlappyBird/ (repo phải public, Pages Source = GitHub Actions).
+App KMP-SevenBalls mở URL này trong WebView → **sửa game chỉ cần push, không cần phát hành lại app**.
 
-```bash
-sdk/publish.sh ~/Documents/GitHub/KMP-SevenBalls/maven_local 1.0.0   # build game + publish thư viện (JDK 21+)
-```
-
-- Bản web 1 file (`packSingleHtml`) nhúng sẵn JS + ảnh vì `fetch()` của KorGE không đọc được `file://` trong WebView.
 - Tên người chơi: app chủ truyền qua query string `?flappy_username=...` → game đọc `Environment["FLAPPY_USERNAME"]`
   (`EnvironmentPlayerRepository`); desktop: `FLAPPY_USERNAME=ganji ./gradlew runJvm`.
 - Input phải chạy được bằng chạm (`onDown`), vì điện thoại không có phím SPACE.
-- App chủ khai báo dependency ở `androidMain` + `iosMain` (không phải `commonMain`, vì thư viện không có desktop).
-- Đổi game → tăng version khi publish (Gradle cache theo version) và cập nhật `flappybird` trong `libs.versions.toml` của app chủ.
+- Best score lưu trong `localStorage` của trang (WebView Android cần `domStorageEnabled`).
+- Đường dẫn tài nguyên phải là tương đối (`resourcesVfs["bird_idle.png"]`): trang chạy dưới `/FlappyBird/`, không ở gốc domain.
 
 JDK 21+ (CI dùng 21). Giữ style theo `.editorconfig` (Kotlin indent 2).
 
