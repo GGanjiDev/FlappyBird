@@ -1,0 +1,4 @@
+# Do task syncGameHtml copy từ ../../build/single/flappybird.html, không commit
+/src/commonMain/composeResources/files/flappybird.html
+# Đường dẫn Android SDK trên máy
+/local.properties
