@@ -3,7 +3,7 @@
 Game Flappy Bird 2D viết bằng **KorGE 6.0.0 + Kotlin Multiplatform** (Kotlin 2.0.20).
 Kiến trúc: **Clean Architecture + MVI + multi-module chia theo feature** (cùng convention với dự án HavestMoon).
 
-Đọc `docs/ARCHITECTURE.md` trước khi tạo module hoặc màn hình mới.
+Đọc phần **Architecture** trong `README.md` trước khi tạo module hoặc màn hình mới.
 
 ---
 
@@ -34,7 +34,7 @@ JDK 21+ (CI dùng 21). Giữ style theo `.editorconfig` (Kotlin indent 2).
 ## Module map
 
 ```
-(root)          app shell: src/main.kt, resources/ (bird_idle/up/down.png)
+(root)          app shell: src/main.kt, resources/ (bird_idle/up/down.png, flap.wav, music.mp3)
 app/navigation  AppNavGraph (đăng ký DI + destination) + di/CoreModule + di/KorgeKeyValueStorage
 feature/*       game
 core/*          model · domain · data · engine
@@ -77,3 +77,12 @@ Scene chạy `sceneView.runSystems(views.input.keys, systems)`; world chỉ gử
 
 - Chỉ báo "xong" khi `./gradlew jvmTest` pass và game chạy được bằng `./gradlew runJvm`.
 - Không commit trực tiếp vào `main`.
+
+---
+
+## Âm thanh
+
+- `GameScene` nạp `flap.wav` bằng `readSound()` (ngắn, nằm trong bộ nhớ) và `music.mp3` bằng `readMusic()` (stream, lặp mãi, volume 0.4).
+- Tiếng vỗ cánh phát khi xử lý Effect `StartRun`/`Flap` (âm thanh là side effect → đi qua Effect, không gửi Event riêng).
+- Phát bằng `this@GameScene.coroutineContext` để âm thanh tự dừng khi Scene bị huỷ; `sceneDestroy()` dừng nhạc nền.
+- Trên web, trình duyệt chặn âm thanh cho tới lần chạm/phím đầu tiên — nhạc tự bắt đầu sau đó, không cần code thêm.

@@ -1,5 +1,4 @@
 plugins {
-  // Plugin của KorGE để dựng library module đa nền tảng
   id("com.soywiz.kproject")
 }
 
